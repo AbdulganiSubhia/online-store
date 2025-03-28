@@ -1,0 +1,64 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // يجب تطبيق Flutter Gradle Plugin بعد إضافات Android و Kotlin
+    id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services' version '4.3.15'
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader("UTF-8") { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
+if (flutterVersionCode == null) {
+    flutterVersionCode = "1"
+}
+
+def flutterVersionName = localProperties.getProperty("flutter.versionName")
+if (flutterVersionName == null) {
+    flutterVersionName = "1.0"
+}
+
+android {
+    namespace = "com.example.one_project_fierbase"
+    compileSdk = flutter.compileSdkVersion  
+
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId = "com.example.one_project_fierbase"
+        minSdk = 23     // تحديث إلى  دائما 23
+        targetSdk = flutter.targetSdkVersion   
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    buildTypes {
+        release {
+            // يتم استخدام توقيع debug مؤقتاً لسهولة البناء، يمكنك تعديله للتوقيع الخاص بالإصدار عند الحاجة.
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+dependencies {
+    // استيراد Firebase BoM لإدارة إصدارات مكتبات Firebase
+    implementation platform('com.google.firebase:firebase-bom:33.9.0')
+
+    // إضافة مكتبة Firebase Analytics (يتم تحديد الإصدار عبر BoM)
+    implementation 'com.google.firebase:firebase-analytics'
+}
+
+flutter {
+    source = "../.."
+}
